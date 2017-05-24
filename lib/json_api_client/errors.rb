@@ -3,17 +3,22 @@ module JsonApiClient
     class ApiError < StandardError
       attr_reader :env
       def initialize(env)
-        throw 'The server\'s answer is not JSONAPI like' unless (env[:body] && env[:body]["jsonapi"])
+        if env[:body] && env[:body]["jsonapi"]
+          @is_jsonapi = false
+          puts 'The server\'s answer is not JSONAPI like'
+        else
+          @is_jsonapi = true
+        end
         @env = env
       end
 
       # def params
 
       def message
-        @message ||= "\n#{env.method.upcase} #{parsed_url.site + parsed_url.path}\n" +
+        @message ||= (@is_jsonapi && "\n#{env.method.upcase} #{parsed_url.site + parsed_url.path}\n" +
         "\nREQUEST PARAMS\n#{parsed_url.query}\n#{JSON.pretty_generate(query_values)}\n" +
         "\nREQUEST BODY\n#{JSON.pretty_generate(request_body)}\n" +
-        "\nRESPONSE\n#{JSON.pretty_generate(env.body)}"
+        "\nRESPONSE\n#{JSON.pretty_generate(env.body)}") || ""
       end
 
       def parsed_url
