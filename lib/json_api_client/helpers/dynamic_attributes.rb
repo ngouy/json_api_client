@@ -55,7 +55,7 @@ module JsonApiClient
                             end
 
         if normalized_method =~ /^(.*)=$/
-          if key_formatter && nested_key_unformat?
+          if key_formatter && defined?(nested_key_unformat?) && nested_key_unformat?
             set_attribute($1, nested_key_unformat(args.first))
           else
             set_attribute($1, args.first)
