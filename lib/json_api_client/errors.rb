@@ -3,7 +3,7 @@ module JsonApiClient
     class ApiError < StandardError
       attr_reader :env
       def initialize(env)
-        throw 'The server\'s answer is not JSONAPI like' unless env[:body]["jsonapi"]
+        throw 'The server\'s answer is not JSONAPI like' unless (env[:body] && env[:body]["jsonapi"])
         @env = env
       end
 
