@@ -37,6 +37,16 @@ module JsonApiClient
 
       protected
 
+      def deep_unformat(param)
+        if param.is_a?(Hash)
+          param.map {|k, v| [key_formatter.unformat(k), deep_unformat(v)] }.to_h
+        elsif param.is_a?(Array)
+          param.map { |elem| deep_unformat(elem) }
+        else
+          param
+        end
+      end
+
       def method_missing(method, *args, &block)
         normalized_method = if key_formatter
                               key_formatter.unformat(method.to_s)
@@ -45,7 +55,12 @@ module JsonApiClient
                             end
 
         if normalized_method =~ /^(.*)=$/
-          set_attribute($1, args.first)
+          if key_formatter && defined?(deep_key_unformat?) && deep_key_unformat?
+            # byebug
+            set_attribute($1, deep_unformat(args.first))
+          else
+            set_attribute($1, args.first)
+          end
         elsif has_attribute?(method)
           attributes[method]
         else
