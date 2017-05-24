@@ -2,7 +2,9 @@ module JsonApiClient
   module Middleware
     class Status < Faraday::Middleware
       def call(environment)
+        request_body = environment.body || {}.to_s
         @app.call(environment).on_complete do |env|
+          env[:request_body] = JSON.parse(request_body)
           handle_status(env[:status], env)
 
           # look for meta[:status]
@@ -25,7 +27,7 @@ module JsonApiClient
         when 403
           raise Errors::AccessDenied, env
         when 404
-          raise Errors::NotFound, env[:url]
+          raise Errors::NotFound, env
         when 409
           raise Errors::Conflict, env
         when 400..499
@@ -33,7 +35,7 @@ module JsonApiClient
         when 500..599
           raise Errors::ServerError, env
         else
-          raise Errors::UnexpectedStatus.new(code, env[:url])
+          raise Errors::UnexpectedStatus.new(code, env)
         end
       end
     end
