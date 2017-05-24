@@ -65,6 +65,11 @@ module JsonApiClient
         route_formatter.format(resource_name.pluralize)
       end
 
+      # set nested_key_format if precised, usefull if your jsonapi data returns hashes as values
+      def use_nested_key_unformat
+        self.class_variable_set(:@@nested_key_unformat, true)
+      end
+
       # The name of a single resource. i.e. Article -> article, Person -> person
       #
       # @return [String]
@@ -342,6 +347,11 @@ module JsonApiClient
     # @return [Boolean]
     def new_record?
       !persisted?
+    end
+
+    # Return true if related class has it to true
+    def nested_key_unformat?
+      self.class.class_variable_defined?(:@@nested_key_unformat) && self.class.class_variable_get(:@@nested_key_unformat)
     end
 
     # When we represent this resource as a relationship, we do so with id & type

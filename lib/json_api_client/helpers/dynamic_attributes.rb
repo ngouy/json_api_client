@@ -37,11 +37,11 @@ module JsonApiClient
 
       protected
 
-      def deep_unformat(param)
+      def nested_key_unformat(param)
         if param.is_a?(Hash)
-          param.map {|k, v| [key_formatter.unformat(k), deep_unformat(v)] }.to_h
+          param.map {|k, v| [key_formatter.unformat(k), nested_key_unformat(v)] }.to_h
         elsif param.is_a?(Array)
-          param.map { |elem| deep_unformat(elem) }
+          param.map { |elem| nested_key_unformat(elem) }
         else
           param
         end
@@ -55,9 +55,10 @@ module JsonApiClient
                             end
 
         if normalized_method =~ /^(.*)=$/
-          if key_formatter && defined?(deep_key_unformat?) && deep_key_unformat?
+          byebug
+          if key_formatter && nested_key_unformat?
             # byebug
-            set_attribute($1, deep_unformat(args.first))
+            set_attribute($1, nested_key_unformat(args.first))
           else
             set_attribute($1, args.first)
           end
