@@ -9,13 +9,13 @@ module JsonApiClient
             result_set.record_class = klass
             result_set.uri = response.env[:url]
             handle_json_api(result_set, data)
-            handle_data(result_set, data)
             handle_errors(result_set, data)
             handle_meta(result_set, data)
             handle_links(result_set, data)
             handle_relationships(result_set, data)
             handle_pagination(result_set, data)
             handle_included(result_set, data)
+            handle_data(result_set, data)
           end
         end
 
@@ -48,11 +48,10 @@ module JsonApiClient
         #  }
         #
         #
-        def parameters_from_resource(params)
+        def parameters_from_resource(params, result_set)
           attrs = params.slice('id', 'links', 'meta', 'type', 'relationships')
           attrs.merge(params.fetch('attributes', {}))
-        end
-
+          attrs.merge!(result_set: result_set})
         private
 
         def handle_json_api(result_set, data)
@@ -66,7 +65,7 @@ module JsonApiClient
           # we will treat everything as an Array
           results = [results] unless results.is_a?(Array)
           resources = results.compact.map do |res|
-            resource = result_set.record_class.load(parameters_from_resource(res))
+            resource = result_set.record_class.load(parameters_from_resource(res, result_set))
             resource.last_result_set = result_set
             resource
           end

@@ -300,6 +300,7 @@ module JsonApiClient
     # @param params [Hash] Attributes, links, and relationships
     def initialize(params = {})
       @persisted = nil
+      self.last_result_set = params.delete("result_set")
       self.links = self.class.linker.new(params.delete("links") || {})
       self.relationships = self.class.relationship_linker.new(self.class, params.delete("relationships") || {})
       self.class.associations.each do |association|
