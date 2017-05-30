@@ -5,7 +5,7 @@ module JsonApiClient
       def initialize(env)
         unless env[:body] && env[:body]["jsonapi"]
           @is_jsonapi = false
-          puts 'The server\'s answer is not JSONAPI like'
+          @message = 'and the server\'s answer is not JSONAPI like'
         else
           @is_jsonapi = true
         end
