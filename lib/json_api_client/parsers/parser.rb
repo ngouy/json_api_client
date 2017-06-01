@@ -52,6 +52,7 @@ module JsonApiClient
           attrs = params.slice('id', 'links', 'meta', 'type', 'relationships')
           attrs.merge(params.fetch('attributes', {}))
           attrs.merge!(result_set: result_set)
+        end
         private
 
         def handle_json_api(result_set, data)
