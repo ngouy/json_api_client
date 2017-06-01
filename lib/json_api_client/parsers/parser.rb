@@ -51,7 +51,7 @@ module JsonApiClient
         def parameters_from_resource(params, result_set)
           attrs = params.slice('id', 'links', 'meta', 'type', 'relationships')
           attrs.merge(params.fetch('attributes', {}))
-          attrs.merge!(result_set: result_set)
+          attrs.merge!({result_set: result_set})
         end
         private
 
