@@ -21,7 +21,8 @@ module JsonApiClient
           instance_variable_get(:"@#{relationship_name}")
         else
           relationship_data = relationships.send(relationship_name.to_sym)['data']
-          if defined?(last_result_set.included) && last_result_set.included.data_for(relationship_name, relationship_data)
+          # byebug
+          if defined?(last_result_set.included) && (last_result_set.included.data != {}) && last_result_set.included.data_for(relationship_name, relationship_data)
             included_relationship = last_result_set.included.data_for(relationship_name, relationship_data)
           end
           if included_relationship

@@ -22,7 +22,7 @@ module JsonApiClient
           relationships.send(association.attr_name.to_sym)['data'].each do |related|
             relationship_id = related['id']
             relationship_type = related['type']
-            if defined?(last_result_set.included.data) && last_result_set.included.data[relationship_type]
+            if defined?(last_result_set.included.data) && (last_result_set.included.data != {}) && last_result_set.included.data[relationship_type]
               included_relationship = last_result_set.included.data[relationship_type][relationship_id]
             end
             if included_relationship
